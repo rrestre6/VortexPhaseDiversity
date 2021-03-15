@@ -31,7 +31,7 @@ gridSize = 120;% Padarray size
 gaussianC = 0.3;% Gaussian beam diameter, this is with respect to gridsize, in this case gaussianC = 0.3 * gridSize
 rLimit = 74/gridSize;% FT gaussian effective size
 verbosity = 1;
-seed = 1;
+seed = 0;
 dx = 0;
 dy = 0;
 %mType = 'nelder';
