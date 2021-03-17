@@ -34,17 +34,19 @@ verbosity = 1;
 dx = 0;
 dy = 0;
 %mType = 'nelder';
-mType = 'nonlin';
-mPars = {1 1e-6};% Minimization parameters, for this procedure [isz, tolFun]
+mType = 'nonlin'; 
+mPars = {1000 1e-12 4000 100};% Minimization parameters, for this procedure [isz, tolFun]
 % The isz is the initial step size which determines the magnitude of the steps in first iteration - recommended 1-
 % tolFun is the tolerance of the function determined by the change between two successive iteration, if the error change is
 % smaller than the given tolerance, the algorithm stops. -recommended range [1e-4 - 1e-7]-.
+addpath(genpath('../../matlab'));
 
 
 %% Diversities
 % As we only want to use topological charge as diversity, $l$ diversities are [-2, 2], then $k$ diversities are vectors inside a cell
 % which contains the diversities vectors, zero in this case
 kDiv = {[0 0 0 0 0 0 0 0 0 0 0 0 0]', [0 0 0 0 0 0 0 0 0 0 0 0 0]'};
+% kDiv = {[0]', [0]'};
 lDiv = [-2, 2];
 
 %% Desired aberration
@@ -60,14 +62,15 @@ rowRangeSLM = (FTSize - gridSize) / 2 + 1:(FTSize + gridSize) / 2;
 %% Diversity images creation
 % We use CalcOAMBeamFTFromAberrations2 which is the image simulator in order to produce the desire diversities.
 % This one has OAM -2
+coeff = 3:size(ZAberration,1)+2;
 order = lDiv(1);
 ZBaseAberration = kDiv{1} + ZAberration;
-[~, IntensityCenterZ3( :, :, 1), ~, ~, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order);
+[~, IntensityCenterZ3( :, :, 1), ~, ~, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order, coeff);
 
 % This one has OAM 2
 order = lDiv(2);
 ZBaseAberration = kDiv{2} + ZAberration;
-[~, IntensityCenterZ3( :, :, 2), ~, ~, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order);
+[~, IntensityCenterZ3( :, :, 2), ~, ~, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order, coeff);
 
 % Only keep the area with information
 ROIImageZ3 = IntensityCenterZ3( colRangeSLM, rowRangeSLM, :);
@@ -78,9 +81,11 @@ clear IntensityCenterZ3
 
 % Initial seed for the algorithm
 ZBaseAberration = zeros(15,1);
+coeff = 3:size(ZBaseAberration,1)+2;
+%coeff = 4;
 
 tic; % time
-[ZAberrationsZ3, ~, ~, ~, ~, ~, ~, ~, waveAberationPD, PDIntensityZ3] = RetrievePhaseFromPhaseDiversity1(ROIImageZ3, FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, 0, dx, dy, kDiv, lDiv, mType, mPars, verbosity); % Run phase diversities
+[ZAberrationsZ3, ~, ~, ~, ~, ~, ~, ~, waveAberationPD, PDIntensityZ3] = RetrievePhaseFromPhaseDiversity1(ROIImageZ3, FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, 0, dx, dy, kDiv, lDiv, mType, mPars, verbosity, coeff); % Run phase diversities
 
 % note that printed in terminal is the final error and the aberrations retrieved, which clearly is 1lambda astigmatism
 tiempoPDZ3 = toc;

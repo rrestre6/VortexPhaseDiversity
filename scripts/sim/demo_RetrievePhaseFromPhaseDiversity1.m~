@@ -1,5 +1,5 @@
 %%
-% File: demo_RetrievePhaseFromPhaseDiversity3.m
+% File: demo_RetrievePhaseFromPhaseDiversity1.m
 % Author: Santiago Echeverri, Ren� Restrepo, Carlos Cuartas and N�stor
 % Uribe
 % Date:	  19/07/2016
@@ -11,9 +11,8 @@
 %%
 %
 %		This file contains one example of the PD implementation in this case,
-%		the procedure is employed using four diversities, two with topological
-%		charge [-2,2] and no Zernikes and two with topological charge [0, 0] and
-%		[-0.5, 0.5] lambda astigmatism
+%		the procedure is employed using the two best-fitting diversities $-2, 2$
+%		The idea is to get 1lambda astigmatism
 %
 %		NOTE: This program does ignore piston and tilts.
 %
@@ -35,7 +34,7 @@ verbosity = 1;
 dx = 0;
 dy = 0;
 %mType = 'nelder';
-mType = 'nonlin';
+mType = 'nonlin'; 
 mPars = {1000 1e-12 4000 100};% Minimization parameters, for this procedure [isz, tolFun]
 % The isz is the initial step size which determines the magnitude of the steps in first iteration - recommended 1-
 % tolFun is the tolerance of the function determined by the change between two successive iteration, if the error change is
@@ -44,16 +43,17 @@ addpath(genpath('../../matlab'));
 
 
 %% Diversities
-% We want four diversities, so four lDiv are declarated, as mentioned initially, those are [0, 0, -2, 2]. The Zernike $kDiv$ are
-% [0 0.5], [0 -0.5], [0 0], [0 0], as implementated
-kDiv = {[0 0.5 0 0 0 0 0 0 0 0 0 0 0]', [0 -0.5 0 0 0 0 0 0 0 0 0 0 0]', [0 0 0 0 0 0 0 0 0 0 0 0 0]', [0 0 0 0 0 0 0 0 0 0 0 0 0]'};
-lDiv = [0, 0, -2, 2];
+% As we only want to use topological charge as diversity, $l$ diversities are [-2, 2], then $k$ diversities are vectors inside a cell
+% which contains the diversities vectors, zero in this case
+% kDiv = {[0 0 0 0 0 0 0 0 0 0 0 0 0]', [0 0 0 0 0 0 0 0 0 0 0 0 0]'};
+kDiv = {[0]', [0]'};
+lDiv = [-2, 2];
 
 %% Desired aberration
 % In our notation, aberrations follow
 % [defocus, astigmatism, astigmatism45°, comaX, comaY, spherical, trefoil, trefoil45°, ...
 % secondAstigmatism, secondAstigmatism45°, secondComaX, secondComaY, ...],
-ZAberration = [0 0.3 0 -0.4 0 0 0.5 0 0 0 0 0 0]'; % This is astigmatism
+ZAberration = [0 1 0 0 0 0 0 0 0 0 0 0 0]'; % This is astigmatism
 
 %% Image range
 colRangeSLM = (FTSize - gridSize) / 2 + 1:(FTSize + gridSize) / 2;
@@ -61,26 +61,16 @@ rowRangeSLM = (FTSize - gridSize) / 2 + 1:(FTSize + gridSize) / 2;
 
 %% Diversity images creation
 % We use CalcOAMBeamFTFromAberrations2 which is the image simulator in order to produce the desire diversities.
-% This one has OAM 0, 0.5ast
+% This one has OAM -2
 coeff = 3:size(ZAberration,1)+2;
 order = lDiv(1);
 ZBaseAberration = kDiv{1} + ZAberration;
 [~, IntensityCenterZ3( :, :, 1), ~, ~, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order, coeff);
 
-% This one has OAM 0, -0.5ast
+% This one has OAM 2
 order = lDiv(2);
 ZBaseAberration = kDiv{2} + ZAberration;
 [~, IntensityCenterZ3( :, :, 2), ~, ~, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order, coeff);
-
-% This one has OAM -2, 0ast
-order = lDiv(3);
-ZBaseAberration = kDiv{3} + ZAberration;
-[~, IntensityCenterZ3( :, :, 3), ~, ~, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order, coeff);
-
-% This one has OAM 2, -0.5ast
-order = lDiv(4);
-ZBaseAberration = kDiv{4} + ZAberration;
-[~, IntensityCenterZ3( :, :, 4), ~, ~, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order, coeff);
 
 % Only keep the area with information
 ROIImageZ3 = IntensityCenterZ3( colRangeSLM, rowRangeSLM, :);
@@ -91,7 +81,8 @@ clear IntensityCenterZ3
 
 % Initial seed for the algorithm
 ZBaseAberration = zeros(15,1);
-coeff = 3:size(ZBaseAberration,1)+2;
+% coeff = 3:size(ZBaseAberration,1)+2;
+coeff = 4;
 
 tic; % time
 [ZAberrationsZ3, ~, ~, ~, ~, ~, ~, ~, waveAberationPD, PDIntensityZ3] = RetrievePhaseFromPhaseDiversity1(ROIImageZ3, FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, 0, dx, dy, kDiv, lDiv, mType, mPars, verbosity, coeff); % Run phase diversities

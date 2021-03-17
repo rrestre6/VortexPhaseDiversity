@@ -1,6 +1,6 @@
 %%
 % File:	  FTBeamPhaseDiversityErrorFunction1.m
-% Author: Santiago Echeverri, René Restrepo, Carlos Cuartas and Néstor
+% Author: Santiago Echeverri, Renï¿½ Restrepo, Carlos Cuartas and Nï¿½stor
 % Uribe
 % Date:	  19/07/2016
 % Modification:	  10/07/2020
@@ -35,7 +35,7 @@
 
 %% Function definition
 
-function [error] = FTBeamPhaseDiversityErrorFunction1(FTSize, beamDiameter, gaussianC, rLimit, baseZAberrationsDxDy, baseOAM, ZPD, OAMPD, nPDs, ExpIntensity, colRangeIn, rowRangeIn, hAbsFT, hPhaseIFT, fitDxDy, verbosity)
+function [error] = FTBeamPhaseDiversityErrorFunction1(FTSize, beamDiameter, gaussianC, rLimit, baseZAberrationsDxDy, baseOAM, ZPD, OAMPD, nPDs, ExpIntensity, colRangeIn, rowRangeIn, hAbsFT, hPhaseIFT, fitDxDy, verbosity, coeff)
 
 %% Check if dx and dy are already known
 
@@ -49,7 +49,7 @@ function [error] = FTBeamPhaseDiversityErrorFunction1(FTSize, beamDiameter, gaus
   end
 
   %% Create simulated images after changing baseZAberrations to fit the best guest
-  [amplitudeCenter, IntensityCenter, ampIni, waveAberation, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamPhaseDiversityFTFromAberrations1(FTSize, beamDiameter, gaussianC, rLimit, baseZAberrations, baseOAM, dx, dy, ZPD, OAMPD, nPDs);
+  [amplitudeCenter, IntensityCenter, ampIni, waveAberation, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamPhaseDiversityFTFromAberrations1(FTSize, beamDiameter, gaussianC, rLimit, baseZAberrations, baseOAM, dx, dy, ZPD, OAMPD, nPDs, coeff);
 
   %% Error calculus
 %The error is taken from the square sum between all the simulated

@@ -1,6 +1,6 @@
 %%
 % File:	CalcOAMBeamPhaseDiversityFTFromAberrations1.m
-% Author: Santiago Echeverri, René Restrepo, Carlos Cuartas and Néstor
+% Author: Santiago Echeverri, Renï¿½ Restrepo, Carlos Cuartas and Nï¿½stor
 % Uribe
 % Date:	  19/07/2016
 % Modification:	  10/07/2020
@@ -36,7 +36,7 @@
 
 %% Function definition
 
-function [amplitudeCenter, IntensityCenter, ampIni, waveAberation, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamPhaseDiversityFTFromAberrations1(FTSize, beamDiameter, gaussianC, rLimit, baseZAberrations, baseOAM, dx, dy, ZPD, OAMPD, nPDs)
+function [amplitudeCenter, IntensityCenter, ampIni, waveAberation, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamPhaseDiversityFTFromAberrations1(FTSize, beamDiameter, gaussianC, rLimit, baseZAberrations, baseOAM, dx, dy, ZPD, OAMPD, nPDs, coeff)
 
 %% Check inputs
 
@@ -65,7 +65,7 @@ function [amplitudeCenter, IntensityCenter, ampIni, waveAberation, gridSize, col
   for k = 1:nPDs
     ZAberrations(:, k) = baseZAberrations + padarray(ZPD{k}, size_baseZAberrations_1- size(ZPD{k}, 1), 0, 'Post'); % Extend vector with initial aberrations so that they have same size as vector to retrieve
 
-    [amplitudeCenter(:, :, k), IntensityCenter(:, :, k), ampIni, waveAberation(:, :, k), gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamFTFromAberrations2(FTSize, beamDiameter, gaussianC, rLimit, ZAberrations(:, k), dx, dy, baseOAM + OAMPD(k)); % Calculate images
+    [amplitudeCenter(:, :, k), IntensityCenter(:, :, k), ampIni, waveAberation(:, :, k), gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamFTFromAberrations2(FTSize, beamDiameter, gaussianC, rLimit, ZAberrations(:, k), dx, dy, baseOAM + OAMPD(k), coeff); % Calculate images
 
     % --------------------------------------------
 

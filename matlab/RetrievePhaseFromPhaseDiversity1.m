@@ -47,7 +47,7 @@ function [zernikeAberrations, ExpIntensity, colRangeIn, rowRangeIn, ...
                                          gaussianC, rLimit, ...
                                          baseZAberrations, baseOAM, ...
                                          dx, dy, ZPD, OAMPD, minType, ...
-                                         minParms, verbosity) 
+                                         minParms, verbosity, coeff) 
     
  % warning ("off"); %Get rid of multiple messages
  % pkg load optim;  %Load the required packages
@@ -75,7 +75,7 @@ function [zernikeAberrations, ExpIntensity, colRangeIn, rowRangeIn, ...
 
   %% First iteration
   
-  [amplitudeCenter, IntensityCenter, ~, waveAberation, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamPhaseDiversityFTFromAberrations1(FTSize, beamDiameter, gaussianC, rLimit, baseZAberrations, baseOAM, dx, dy, ZPD, OAMPD, nPDs);
+  [amplitudeCenter, IntensityCenter, ~, waveAberation, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamPhaseDiversityFTFromAberrations1(FTSize, beamDiameter, gaussianC, rLimit, baseZAberrations, baseOAM, dx, dy, ZPD, OAMPD, nPDs, coeff);
   
 %% Create handles and initial figures
 
@@ -119,11 +119,11 @@ currentImage=currentImage+1;
     %[x_m, v_m, nevals] = minimize(@(x) ...
     %                             FTBeamPhaseDiversityErrorFunction1(FTSize, beamDiameter, gaussianC, rLimit, x, baseOAM, ZPD, OAMPD, nPDs, ExpIntensity, colRangeIn, rowRangeIn, hAbsFT, hPhaseIFT, fitDxDy, verbosity), x, "isz", minParms{1}, "verbose", "ftol", minParms{2});
     [x_m, v_m, nevals] = fminsearch(@(x) ... 
-                                  FTBeamPhaseDiversityErrorFunction1(FTSize, beamDiameter, gaussianC, rLimit, x, baseOAM, ZPD, OAMPD, nPDs, ExpIntensity, colRangeIn, rowRangeIn, hAbsFT, hPhaseIFT, fitDxDy, verbosity), x, optimset ('Display', 'iter', 'TolFun', minParms{2}));  
+                                  FTBeamPhaseDiversityErrorFunction1(FTSize, beamDiameter, gaussianC, rLimit, x, baseOAM, ZPD, OAMPD, nPDs, ExpIntensity, colRangeIn, rowRangeIn, hAbsFT, hPhaseIFT, fitDxDy, verbosity, coeff), x, optimset ('Display', 'iter', 'TolFun', minParms{2}));  
   elseif (strcmp(minType, 'nonlin'))
 	%[x_m, objf, cvg, outp] = nonlin_min( @(x) FTBeamPhaseDiversityErrorFunction1(FTSize, beamDiameter, gaussianC, rLimit, x, baseOAM, ZPD, OAMPD, nPDs, ExpIntensity, colRangeIn, rowRangeIn, hAbsFT, hPhaseIFT, fitDxDy, verbosity), x, optimset ('iter', true, 'TolFun', minParms{2}));
     [x_m, v_m, nevals] = fminunc(@(x) ... 
-                                  FTBeamPhaseDiversityErrorFunction1(FTSize, beamDiameter, gaussianC, rLimit, x, baseOAM, ZPD, OAMPD, nPDs, ExpIntensity, colRangeIn, rowRangeIn, hAbsFT, hPhaseIFT, fitDxDy, verbosity), x, ...
+                                  FTBeamPhaseDiversityErrorFunction1(FTSize, beamDiameter, gaussianC, rLimit, x, baseOAM, ZPD, OAMPD, nPDs, ExpIntensity, colRangeIn, rowRangeIn, hAbsFT, hPhaseIFT, fitDxDy, verbosity, coeff), x, ...
                                   optimoptions ('fminunc', 'Display', 'iter', 'OptimalityTolerance', minParms{2}, 'MaxIterations', minParms{1}, 'MaxFunctionEvaluations', minParms{3}, ...
                                   'StepTolerance', minParms{2}, 'HessUpdate', 'bfgs'));  
  
@@ -146,7 +146,7 @@ currentImage=currentImage+1;
   
   %%Final calculus
   
- [amplitudeCenter, IntensityCenter, ~, waveAberation, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamPhaseDiversityFTFromAberrations1(FTSize, beamDiameter, gaussianC, rLimit, zernikeAberrations, baseOAM, dx, dy, ZPD, OAMPD, nPDs);
+ [amplitudeCenter, IntensityCenter, ~, waveAberation, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamPhaseDiversityFTFromAberrations1(FTSize, beamDiameter, gaussianC, rLimit, zernikeAberrations, baseOAM, dx, dy, ZPD, OAMPD, nPDs, coeff);
 
  
  % warning ("on", "Octave:broadcast"); % To get back to normal

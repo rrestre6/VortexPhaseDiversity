@@ -1,6 +1,6 @@
 %%
 % File: CalcOAMBeamFTFromAberrations2.m
-% Author: Santiago Echeverri, René Restrepo, Carlos Cuartas and Néstor
+% Author: Santiago Echeverri, Renï¿½ Restrepo, Carlos Cuartas and Nï¿½stor
 % Uribe
 % Date:	  19/07/2016
 % Modification:	  10/07/2020
@@ -41,7 +41,7 @@
 
 %% Function definition
 
-function [amplitudeCenter, IntensityCenter, ampIni, SLM, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, zernikeAberrations, dx, dy, order)
+function [amplitudeCenter, IntensityCenter, ampIni, SLM, gridSize, colRangeSLM, rowRangeSLM] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, zernikeAberrations, dx, dy, order, coeff)
 
   warning('off');
 
@@ -97,7 +97,7 @@ function [amplitudeCenter, IntensityCenter, ampIni, SLM, gridSize, colRangeSLM, 
 	% 1D matrix with coordinates within the circle to use Zernike.m
 	RVect=rPupil(~isnan(mask2));
 	TVect=Theta(~isnan(mask2));
-  coeff = 3:size(zernikeAberrations,1)+2; % Vector with weights
+  %coeff = 3:size(zernikeAberrations,1)+2; % Vector with weights
   [waveAberationVector,~,~]=Zernike(coeff,RVect,TVect); %Calculate Zernike aberrations
 	% The interior product of all Zernikes with themselves is
 	zProds = waveAberationVector.'* waveAberationVector * dA;

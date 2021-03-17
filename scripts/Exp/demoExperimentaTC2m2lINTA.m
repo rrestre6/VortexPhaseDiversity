@@ -40,6 +40,7 @@ mPars = {1000 1e-12 4000 300};% Minimization parameters, for this procedure [isz
 % The isz is the initial step size which determines the magnitude of the steps in first iteration - recommended 1-
 % tolFun is the tolerance of the function determined by the change between two successive iteration, if the error change is
 % smaller than the given tolerance, the algorithm stops. -recommended range [1e-4 - 1e-7]-.
+addpath(genpath('../../matlab'));
 
 
 %% Diversities
