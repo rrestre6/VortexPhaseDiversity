@@ -28,8 +28,8 @@
 %% Constants
 FTSize = 1024;% Images size
 gridSize = 120;% Padarray size
-gaussianC = 0.23;% Gaussian beam diameter, this is with respect to gridsize, in this case gaussianC = 0.3 * gridSize
-rLimit = 96/gridSize;% FT gaussian effective size
+gaussianC = 0.3;% Gaussian beam diameter, this is with respect to gridsize, in this case gaussianC = 0.3 * gridSize
+rLimit = 74/gridSize;% FT gaussian effective size
 verbosity = 1;
 seed = 0;
 filter = 1;
@@ -138,18 +138,17 @@ if seed
     beamImage(:,:,1) = (TC0(xSize,ySize))/(max(TC0(:)));
     beamImage(:,:,2) = (TC1(xSize,ySize))/(max(TC1(:)));
     if filter
-        beamImagefft2= fft(fft(beamImage,[],1),[],2);
-        beamImagefilt = bsxfun(@times,beamImagefft2,fftshift(sg));
-        beamImage = real(ifft(ifft(beamImagefilt,[],1),[],2));
+        beamImagefft2= fft(fft(ROIImageZ3,[],1),[],2);
+        ROIImageZ3filt = bsxfun(@times,ROIImageZ3fft2,fftshift(sg));
+        ROIImageZ3 = real(ifft(ifft(ROIImageZ3filt,[],1),[],2));
     end
-    coeff = 3:17;
     [Phase, intensity, ZBaseAberration] = RetrievePhaseFromSpiralPDModified3(beamImage, FTSize,...
-        gridSize, gaussianC, rLimit, lDiversities, kDiversities, mPars{4}, verbosity, coeff);
+        gridSize, gaussianC, rLimit, lDiversities, kDiversities, mPars{4}, verbosity);
     ZBaseAberration = ZBaseAberration';
     
 else
     ZBaseAberration = zeros(15,1); % Usually 15 zernikes zeros(15,1)
-    %ZBaseAberration(1)=5;  ZBaseAberration(7)=0.3;  ZBaseAberration(8)=0.4;
+    ZBaseAberration(1)=5;  ZBaseAberration(7)=0.3;  ZBaseAberration(8)=0.4;
 end
 coeff = 3:size(ZBaseAberration,1)+2;
 

@@ -32,7 +32,7 @@
 
 %% Function definition
 
-function [Phase, intensity, ZBaseAberration] = RetrievePhaseFromSpiralPDModified3(beamImage, FTSize, gridSize, gaussianC, rLimit, lDiversities, kDiversities, minParms, verbosity)
+function [Phase, intensity, ZBaseAberration] = RetrievePhaseFromSpiralPDModified3(beamImage, FTSize, gridSize, gaussianC, rLimit, lDiversities, kDiversities, minParms, verbosity, coeff)
 
 	warning('off'); %Get rid of multiple messages
 
@@ -202,7 +202,7 @@ function [Phase, intensity, ZBaseAberration] = RetrievePhaseFromSpiralPDModified
         ProjectionGS_OAM = ((angle(phaseIni_vec)) .' * zNorm) * dA;
         ZBaseAberration = ProjectionGS_OAM(4:18);
         order = 0;
-        [~, ~, ~, phaseIni2, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order);
+        [~, ~, ~, phaseIni2, ~, ~, ~] = CalcOAMBeamFTFromAberrations2(FTSize, gridSize, gaussianC, rLimit, ZBaseAberration, dx, dy, order, coeff);
 %______________________________________________________________________________________________________________
 
 			%figure(3),  imagesc(angle(AntiDiversitiesPad{m}(colRangeSLM,rowRangeSLM)));
